@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>WebSocket Test</title>
+</head>
+<body>
+    <h2>WebSocket Test</h2>
+    <button onclick="connect()">Connect</button>
+    <button onclick="disconnect()">Disconnect</button>
+    <div id="messages"></div>
+
+    <script>
+        let socket;
+        const jwtToken = "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6WyJST0xFX1BFT1BMRV9FTVBMT1lFRSIsIlJPTEVfTEVBVkVfRU1QTE9ZRUUiLCJST0xFX0FUVEVOREFOQ0VfRU1QTE9ZRUUiXSwidG9rZW5fdHlwZSI6IkFDQ0VTUyIsInN1YiI6ImNhcDQxczE3QGJsb25kbWFpbC5jb20iLCJpYXQiOjE3Mjg5NzMzMDIsImV4cCI6MTcyODk3NjkwMn0.EyFgmWrKz0BrW1IPrLJ-LjmmOQZY3MMWZF7ohnWWzg0";
+
+        function connect() {
+            // Connect to WebSocket server with JWT token
+            socket = new WebSocket(`ws://localhost:8008/ws/notification?token=${jwtToken}`);
+
+            // When a message is received from the backend
+            socket.onmessage = function(event) {
+                displayMessage(event.data);  // Call displayMessage to show received message
+            };
+
+            // When the connection is successfully opened
+            socket.onopen = function() {
+                console.log("Connected to WebSocket server");
+            };
+
+            // When the WebSocket connection is closed
+            socket.onclose = function() {
+                console.log("Disconnected from WebSocket server");
+            };
+        }
+
+        function disconnect() {
+            if (socket) {
+                socket.close();
+            }
+        }
+
+        function displayMessage(message) {
+            const messagesDiv = document.getElementById('messages');
+            const messageElement = document.createElement('p');
+            messageElement.textContent = `Message from backend: ${message}`;
+            messagesDiv.appendChild(messageElement);
+        }
+    </script>
+</body>
+</html>
